@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منصة التوجيهي الشاملة</title>
+  <title>المنصة التعليمية - قسم الامتحانات</title>
   <style>
     :root {
       --primary: #1e3a8a;
       --primary-hover: #1d4ed8;
-      --accent: #f59e0b;
+      --accent: #ea580c;
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --text: #0f172a;
@@ -30,15 +30,17 @@
       padding: 15px;
       display: flex;
       justify-content: center;
+      min-height: 100vh;
+      align-items: center;
     }
 
     .container {
       width: 100%;
-      max-width: 750px;
+      max-width: 680px;
       background: var(--card-bg);
       padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
       position: relative;
     }
 
@@ -53,124 +55,154 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* التايمر الثابت أعلى اليسار بالزاوية */
-    .timer-badge {
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      background: #ef4444;
-      color: white;
-      padding: 10px 18px;
-      border-radius: 25px;
-      font-weight: bold;
-      font-size: 15px;
-      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
-      z-index: 9999;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    /* لوحة الإحصائيات الرئيسية - قابلة للضغط */
-    .stats-clickable-card {
+    /* 1. دائرة الإحصائيات في أعلى يمين المتصفح */
+    .stats-circle-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
       background: linear-gradient(135deg, #1e3a8a, #3b82f6);
       color: white;
-      border-radius: 12px;
-      padding: 18px;
-      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
       cursor: pointer;
+      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+      border: 2px solid #ffffff;
       transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+      z-index: 100;
     }
-    .stats-clickable-card:active { transform: scale(0.98); }
-    
-    .stats-header-title {
+    .stats-circle-btn:active { transform: scale(0.92); }
+
+    /* الزر الزجاجي المتدرج من اليمين لليسار */
+    .glass-btn {
+      background: linear-gradient(to left, rgba(30, 58, 138, 0.9), rgba(59, 130, 246, 0.7));
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 25px rgba(30, 58, 138, 0.25);
+      border-radius: 16px;
+      padding: 22px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: #ffffff;
+      cursor: pointer;
+      margin-top: 25px;
+      transition: all 0.3s ease;
+    }
+    .glass-btn:active { transform: scale(0.97); }
+
+    /* أزرار اختيار العناصر */
+    .select-card {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 15px;
+    }
+    .select-card:hover:not(.disabled) {
+      border-color: var(--primary);
+      background: #f0f7ff;
+    }
+    .select-card.selected {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+    .select-card.disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      background: #f1f5f9;
+    }
+    .select-card-title {
       font-weight: bold;
-      margin-bottom: 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      padding-bottom: 8px;
+      font-size: 16px;
+    }
+    .select-card-sub {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 4px;
     }
 
-    .stats-container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+    /* التايمر خيارات قبل الامتحان */
+    .timer-section {
+      background: #fff7ed;
+      border: 2px solid #fed7aa;
+      border-radius: 14px;
+      padding: 16px;
+      margin: 20px 0;
     }
-    .stat-box {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 10px;
-      border-radius: 8px;
-      text-align: center;
-      backdrop-filter: blur(4px);
-    }
-    .stat-number { font-size: 22px; font-weight: bold; }
-    .stat-label { font-size: 11px; opacity: 0.9; }
-
-    /* خيارات التفاعل باللمس (Touch Chips) */
-    .section-title {
-      font-size: 14px;
-      font-weight: bold;
-      color: #475569;
-      margin: 16px 0 8px 0;
-    }
-
-    .touch-grid {
+    .timer-grid {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-top: 10px;
     }
-
-    .touch-chip {
-      background: #f1f5f9;
-      border: 2px solid #e2e8f0;
-      color: var(--text);
-      padding: 10px 16px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
+    .timer-chip {
+      background: white;
+      border: 1px solid #fdba74;
+      color: #c2410c;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
       cursor: pointer;
-      user-select: none;
-      transition: all 0.2s ease;
-      flex: 1 1 calc(50% - 8px);
+      flex: 1 1 calc(20% - 8px);
       text-align: center;
-      -webkit-tap-highlight-color: transparent;
+      transition: all 0.2s;
     }
-    .touch-chip:active { transform: scale(0.96); }
-    .touch-chip.selected {
-      background: var(--primary);
-      border-color: var(--primary);
+    .timer-chip.selected {
+      background: var(--accent);
       color: white;
-      box-shadow: 0 3px 8px rgba(30, 58, 138, 0.3);
+      border-color: var(--accent);
     }
 
-    /* أزرار التايمر بقائمة أنيقة */
-    .timer-chips .touch-chip {
-      flex: 1 1 calc(33.33% - 8px);
-    }
-
+    /* أزرار عامة وزر الرجوع */
     .btn {
       background: var(--primary);
       color: white;
       border: none;
       padding: 14px 24px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 16px;
       cursor: pointer;
       width: 100%;
       margin-top: 15px;
       font-weight: bold;
       transition: background 0.2s, transform 0.1s;
-      box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2);
     }
-    .btn:active { transform: scale(0.99); }
+    .btn:active { transform: scale(0.98); }
+    
+    .btn-back {
+      background: #e2e8f0;
+      color: #475569;
+      margin-top: 10px;
+    }
 
+    /* التايمر أثناء تقديم الامتحان */
+    .timer-badge {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #ef4444;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      z-index: 99;
+    }
+
+    /* شاشات الإجابات والنتائج */
     .option-btn {
       background: #f1f5f9;
       color: var(--text);
@@ -182,7 +214,6 @@
       width: 100%;
       margin-bottom: 10px;
       font-size: 15px;
-      transition: all 0.2s;
     }
     .option-btn.selected {
       background: #e2e8f0;
@@ -204,50 +235,23 @@
       transition: width 0.3s;
     }
 
-    /* كروت النتيجة */
     .result-card {
-      padding: 16px;
+      padding: 14px;
       border-radius: 10px;
-      margin-bottom: 12px;
-      border: 2px solid transparent;
+      margin-bottom: 10px;
     }
     .result-card.correct-box {
       background-color: var(--success-bg);
-      border-color: var(--success-border);
+      border: 1px solid var(--success-border);
       color: var(--success-text);
     }
     .result-card.incorrect-box {
       background-color: var(--danger-bg);
-      border-color: var(--danger-border);
+      border: 1px solid var(--danger-border);
       color: var(--danger-text);
     }
-    .result-score {
-      font-size: 28px;
-      font-weight: bold;
-      text-align: center;
-      margin: 20px 0;
-    }
-    .explanation-box {
-      margin-top: 8px;
-      font-size: 14px;
-      opacity: 0.9;
-      border-top: 1px dashed rgba(0,0,0,0.15);
-      padding-top: 6px;
-    }
 
-    /* شاشة سجل الامتحانات التفصيلية */
-    .history-item {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 12px 16px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    /* Modal */
+    /* نافذة Modal الإحصائيات */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -255,112 +259,162 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 10000;
+      z-index: 1000;
       padding: 15px;
     }
     .modal-content {
       background: white;
       padding: 24px;
-      border-radius: 14px;
-      max-width: 400px;
+      border-radius: 18px;
+      max-width: 500px;
       width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 15px 0;
+    }
+    .stat-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 12px;
+      border-radius: 10px;
       text-align: center;
     }
+    .stat-val { font-size: 20px; font-weight: bold; color: var(--primary); }
+    .stat-lbl { font-size: 11px; color: #64748b; }
   </style>
 </head>
 <body>
 
-<!-- شارة التايمر بالزاوية العليا اليسرى -->
+<!-- 1. زر دائرة الإحصائيات ثابت في الزاوية العليا اليمين -->
+<div class="stats-circle-btn" onclick="openStatsModal()" title="الإحصائيات والسجل">📊</div>
+
+<!-- شارة التايمر في الزاوية العليا اليسرى أثناء حل الامتحان -->
 <div id="timer-badge" class="timer-badge hidden">الوقت: <span id="timer-display">00:00</span></div>
 
 <div class="container">
-  
-  <!-- شاشة الدخول الرئيسية -->
-  <div id="start-screen" class="fade-in">
-    <h2 style="text-align: center; margin-top: 0; color: var(--primary);">منصة الاختبارات الإلكترونية</h2>
-    
-    <!-- كرت الإحصائيات (اضغط هنا للانتقال للسجل) -->
-    <div class="stats-clickable-card" onclick="showHistoryScreen()">
-      <div class="stats-header-title">
-        <span>📊 إحصائياتك العامة</span>
-        <span style="font-size: 12px; background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 12px;">عرض السجل ➔</span>
-      </div>
-      <div class="stats-container">
-        <div class="stat-box">
-          <div id="stat-exams" class="stat-number">0</div>
-          <div class="stat-label">امتحانات مقدمة</div>
-        </div>
-        <div class="stat-box">
-          <div id="stat-correct" class="stat-number">0</div>
-          <div class="stat-label">إجابات صحيحة</div>
-        </div>
-        <div class="stat-box">
-          <div id="stat-incorrect" class="stat-number">0</div>
-          <div class="stat-label">إجابات خاطئة</div>
-        </div>
-      </div>
+
+  <!-- الشاشة الترحيبية -->
+  <div id="screen-welcome" class="fade-in">
+    <div style="text-align: center; margin-top: 10px;">
+      <h2 style="color: var(--primary); margin-bottom: 12px;">السلام عليكم..</h2>
+      <p style="font-size: 15px; line-height: 1.7; color: #475569; padding: 0 10px;">
+        هذا برنامج لأهداف تعليمية بحته، هدفه مساعدة الطلاب في موادهم الدراسية من خلال عدة طرائق تعليمية...
+        <br><strong style="color: var(--accent); font-size: 13px;">(هذه مجرد نسخة تجريبية للموقع)</strong>
+      </p>
     </div>
 
-    <!-- 1. الجيل الدراسي -->
-    <div class="section-title">الجيل الدراسي:</div>
-    <div class="touch-grid" id="gen-chips">
-      <div class="touch-chip" onclick="selectChip('gen', '2007', this)">2007</div>
-      <div class="touch-chip" onclick="selectChip('gen', '2008', this)">2008</div>
-      <div class="touch-chip selected" onclick="selectChip('gen', '2009', this)">2009</div>
-      <div class="touch-chip" onclick="selectChip('gen', '2010', this)">2010</div>
+    <!-- مستطيل زجاجي متدرج من اليمين لليسار -->
+    <div class="glass-btn" onclick="goToGrade()">
+      قسم الامتحانات
     </div>
-
-    <!-- 2. الصف -->
-    <div class="section-title">الصف:</div>
-    <div class="touch-grid" id="grade-chips">
-      <div class="touch-chip selected" onclick="selectChip('grade', '12', this)">الثاني عشر (توجيهي)</div>
-      <div class="touch-chip" onclick="selectChip('grade', '11', this)">الأول ثانوي</div>
-    </div>
-
-    <!-- 3. المادة -->
-    <div class="section-title">المادة:</div>
-    <div class="touch-grid" id="subject-chips">
-      <div class="touch-chip selected" onclick="selectChip('subject', 'jordan-history', this)">تاريخ الأردن</div>
-    </div>
-
-    <!-- 4. الوحدة / الدرس -->
-    <div class="section-title">الوحدة / الدرس:</div>
-    <div class="touch-grid" id="lesson-chips">
-      <div class="touch-chip selected" onclick="selectChip('lesson', 'all', this)">جميع الأسئلة</div>
-      <div class="touch-chip" onclick="selectChip('lesson', '1', this)">الدرس الأول: العصور الحجرية</div>
-      <div class="touch-chip" onclick="selectChip('lesson', '2', this)">الدرس الثاني: التطور التاريخي</div>
-    </div>
-
-    <!-- 5. مؤقت الوقت (التايمر) -->
-    <div class="section-title">⏱️ مؤقت الوقت (التايمر):</div>
-    <div class="touch-grid timer-chips" id="timer-chips">
-      <div class="touch-chip selected" onclick="selectChip('timer', '0', this)">بدون تايمر</div>
-      <div class="touch-chip" onclick="selectChip('timer', '15', this)">15 دقيقة</div>
-      <div class="touch-chip" onclick="selectChip('timer', '30', this)">30 دقيقة</div>
-      <div class="touch-chip" onclick="selectChip('timer', '45', this)">45 دقيقة</div>
-      <div class="touch-chip" onclick="selectChip('timer', '60', this)">60 دقيقة</div>
-    </div>
-
-    <button class="btn" onclick="prepareQuiz()">ابدأ الامتحان الآن</button>
   </div>
 
-  <!-- شاشة سجل الامتحانات والإحصائيات المفصلة -->
-  <div id="history-screen" class="hidden fade-in">
-    <h2 style="color: var(--primary);">📜 سجل الامتحانات والتفاصيل</h2>
-    <div style="margin-bottom: 20px;">
-      <p style="font-size: 14px; color: #64748b;">استعرض جميع الامتحانات التي قمت بتأديتها سابقاً:</p>
+  <!-- الخطوة 1: اختيار الصف -->
+  <div id="screen-grade" class="hidden fade-in">
+    <h3>اختر الصف الدراسي:</h3>
+    <div class="select-card selected" onclick="goToSubject()">
+      <div>
+        <div class="select-card-title">توجيهي 2010-الصف الحادي عشر</div>
+        <div class="select-card-sub">متاح حالياً</div>
+      </div>
+      <span>➔</span>
+    </div>
+    <button class="btn btn-back" onclick="showScreen('screen-welcome')">رجوع</button>
+  </div>
+
+  <!-- الخطوة 2: قائمة المواد -->
+  <div id="screen-subject" class="hidden fade-in">
+    <h3>اختر المادة:</h3>
+    <div class="select-card selected" onclick="goToSemester('jordan-history')">
+      <div>
+        <div class="select-card-title">تاريخ الأردن</div>
+        <div class="select-card-sub">جاهز للمراجعة</div>
+      </div>
+      <span>➔</span>
     </div>
 
-    <div id="history-list"></div>
-
-    <div style="display: flex; gap: 10px; margin-top: 20px;">
-      <button class="btn" onclick="showStartScreen()">العودة للرئيسية</button>
-      <button class="btn" style="background: #ef4444;" onclick="clearHistory()">مسح السجل</button>
+    <div class="select-card disabled">
+      <div>
+        <div class="select-card-title">اللغة العربية</div>
+        <div class="select-card-sub">قريباً</div>
+      </div>
     </div>
+
+    <div class="select-card disabled">
+      <div>
+        <div class="select-card-title">الرياضيات</div>
+        <div class="select-card-sub">قريباً</div>
+      </div>
+    </div>
+
+    <div class="select-card disabled">
+      <div>
+        <div class="select-card-title">التربية الإسلامية</div>
+        <div class="select-card-sub">قريباً</div>
+      </div>
+    </div>
+
+    <button class="btn btn-back" onclick="showScreen('screen-grade')">رجوع</button>
+  </div>
+
+  <!-- الخطوة 3: اختيار الفصل -->
+  <div id="screen-semester" class="hidden fade-in">
+    <h3>اختر الفصل الدراسي:</h3>
+    <div class="select-card selected" onclick="goToUnits(1)">
+      <div>
+        <div class="select-card-title">الفصل الأول</div>
+        <div class="select-card-sub">3 وحدات دراسية</div>
+      </div>
+      <span>➔</span>
+    </div>
+
+    <div class="select-card disabled">
+      <div>
+        <div class="select-card-title">الفصل الثاني</div>
+        <div class="select-card-sub">قريباً</div>
+      </div>
+    </div>
+
+    <button class="btn btn-back" onclick="showScreen('screen-subject')">رجوع</button>
+  </div>
+
+  <!-- الخطوة 4: اختيار الوحدة -->
+  <div id="screen-unit" class="hidden fade-in">
+    <h3>اختر الوحدة الدراسية:</h3>
+    <div id="units-container"></div>
+    <button class="btn btn-back" onclick="showScreen('screen-semester')">رجوع</button>
+  </div>
+
+  <!-- الخطوة 5: اختيار الدرس والتايمر (قبل الامتحان) -->
+  <div id="screen-lesson" class="hidden fade-in">
+    <h3>اختر الدرس وبداية الامتحان:</h3>
+    
+    <div id="lessons-container"></div>
+
+    <!-- قسم التايمر قبل بداية الامتحان -->
+    <div class="timer-section">
+      <div style="font-weight: bold; font-size: 14px; color: #9a3412;">⏱️ هل تريد تفعيل المؤقت (التايمر)؟</div>
+      <div class="timer-grid">
+        <div class="timer-chip selected" onclick="setTimer(0, this)">بدون تايمر</div>
+        <div class="timer-chip" onclick="setTimer(10, this)">10 دقائق</div>
+        <div class="timer-chip" onclick="setTimer(15, this)">15 دقيقة</div>
+        <div class="timer-chip" onclick="setTimer(30, this)">30 دقيقة</div>
+        <div class="timer-chip" onclick="setTimer(45, this)">45 دقيقة</div>
+        <div class="timer-chip" onclick="setTimer(60, this)">60 دقيقة</div>
+      </div>
+    </div>
+
+    <button class="btn" onclick="startQuiz()">ابدأ الامتحان الآن</button>
+    <button class="btn btn-back" onclick="showScreen('screen-unit')">رجوع</button>
   </div>
 
   <!-- شاشة تقديم الامتحان -->
-  <div id="quiz-screen" class="hidden fade-in">
+  <div id="screen-quiz" class="hidden fade-in">
     <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
     <div style="display:flex; justify-content:space-between; margin-bottom: 15px;">
       <span id="question-count-text" style="font-weight: bold;">سؤال 1</span>
@@ -370,151 +424,226 @@
     <button id="next-btn" class="btn hidden" onclick="nextQuestion()">السؤال التالي</button>
   </div>
 
-  <!-- شاشة النتيجة -->
-  <div id="result-screen" class="hidden fade-in">
+  <!-- شاشة النتيجة النهائي -->
+  <div id="screen-results" class="hidden fade-in">
     <h2>نتيجة الاختبار</h2>
-    <div id="score-display" class="result-score">علامتك: 0 / 0</div>
+    <div id="score-display" style="font-size: 26px; font-weight: bold; text-align: center; margin: 15px 0;">علامتك: 0 / 0</div>
     <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;">
     <h3>مراجعة تفصيلية للإجابات:</h3>
     <div id="answers-summary"></div>
-    <button class="btn" onclick="showStartScreen()">العودة للرئيسية</button>
+    <button class="btn" onclick="showScreen('screen-welcome')">العودة للرئيسية</button>
   </div>
 
 </div>
 
-<!-- نافذة تنويه التايمر -->
-<div id="hint-modal" class="modal-overlay hidden fade-in">
+<!-- نافذة Modal الإحصائيات التفاعلية -->
+<div id="stats-modal" class="modal-overlay hidden fade-in">
   <div class="modal-content">
-    <h3 style="margin-top:0;">⏱️ تنويه المؤقت</h3>
-    <p id="hint-message">تم تفعيل التايمر لهذا الامتحان. سيبدأ العداد فور الضغط على ابدأ.</p>
-    <button class="btn" onclick="confirmStartQuiz()">تمام، ابدأ</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:10px;">
+      <h3 style="margin:0; color:var(--primary);">📊 قائمة الإحصائيات والسجل</h3>
+      <span style="cursor:pointer; font-weight:bold; font-size:20px;" onclick="closeStatsModal()">✕</span>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div id="m-stat-exams" class="stat-val">0</div>
+        <div class="stat-lbl">عدد الامتحانات</div>
+      </div>
+      <div class="stat-card">
+        <div id="m-stat-answered" class="stat-val">0</div>
+        <div class="stat-lbl">الأسئلة المجاب عليها</div>
+      </div>
+      <div class="stat-card">
+        <div id="m-stat-correct" class="stat-val" style="color:#22c55e;">0</div>
+        <div class="stat-lbl">الإجابات الصحيحة</div>
+      </div>
+      <div class="stat-card">
+        <div id="m-stat-incorrect" class="stat-val" style="color:#ef4444;">0</div>
+        <div class="stat-lbl">الإجابات الخاطئة</div>
+      </div>
+    </div>
+
+    <div style="text-align:center; background:#f0f7ff; padding:12px; border-radius:10px; margin-bottom:15px;">
+      <span style="font-size:13px; color:#475569;">نسبة الإجابات الصحيحة:</span>
+      <strong id="m-stat-rate" style="font-size:18px; color:var(--primary); display:block;">0%</strong>
+    </div>
+
+    <h4 style="margin-bottom:8px;">📜 سجل الامتحانات (History):</h4>
+    <div id="modal-history-list" style="max-height: 180px; overflow-y: auto;"></div>
+
+    <button class="btn btn-back" style="margin-top:15px;" onclick="closeStatsModal()">إغلاق</button>
   </div>
 </div>
 
 <script>
-  let allQuestions = [];
-  let selectedQuestions = [];
+  // هيكل الأسئلة المدمج افتراضياً مع إمكانية التحميل الخارجي
+  let database = [
+    { id: 1, unit: 1, unitName: "الوحدة الأولى: تاريخ الأردن وحضارته", lesson: 1, lessonName: "العصور الحجرية", q: "أولى العصور البشرية التي استقر فيها الإنسان في الأردن هي العصر الحجري القديم.", options: ["صح", "خطأ"], correct: 0, explanation: "استقر الإنسان في الأردن منذ العصر الحجري القديم." },
+    { id: 2, unit: 1, unitName: "الوحدة الأولى: تاريخ الأردن وحضارته", lesson: 1, lessonName: "العصور الحجرية", q: "من أبرز المواقع التابعة للعصر الحجري الحديث في الأردن موقع:", options: ["عين غزال", "البتراء", "أم قيس", "جرش"], correct: 0, explanation: "موقع عين غزال من أشهر القرى الزراعية بالعصر الحجري الحديث." },
+    { id: 3, unit: 1, unitName: "الوحدة الأولى: تاريخ الأردن وحضارته", lesson: 2, lessonName: "التطور التاريخي", q: "نشأت المملكة الأدمية في جنوب الأردن.", options: ["صح", "خطأ"], correct: 0, explanation: "تمركز الأدوميون في جنوب الأردن وكانت عاصمتهم بصيرا." },
+    { id: 4, unit: 2, unitName: "الوحدة الثانية: الأردن في العصر الحديث", lesson: 1, lessonName: "تأسيس الإمارة", q: "تأسست إمارة شرق الأردن عام 1921م.", options: ["صح", "خطأ"], correct: 0, explanation: "وصل الأمير عبد الله الأول إلى معان عام 1920 وأسس الإمارة 1921." },
+    { id: 5, unit: 3, unitName: "الوحدة الثالثة: النهضة الوطنية", lesson: 1, lessonName: "المؤسسات الدستورية", q: "صدر أول دستور للمملكة في عام:", options: ["1928م", "1947م", "1952م", "1974م"], correct: 2, explanation: "دستور 1952 في عهد الملك طلال هو الدستور المعتمد حالياً مع تعديلاته." }
+  ];
+
+  let currentSelection = {
+    grade: '2010',
+    subject: 'jordan-history',
+    semester: 1,
+    unit: null,
+    lesson: null,
+    timerMinutes: 0
+  };
+
+  let activeQuizQuestions = [];
   let currentIndex = 0;
   let userAnswers = [];
   let timerInterval = null;
   let timeRemaining = 0;
 
-  // الإعدادات المختارة باللمس
-  let config = {
-    gen: '2009',
-    grade: '12',
-    subject: 'jordan-history',
-    lesson: 'all',
-    timer: '0'
-  };
-
-  loadStats();
-  loadQuestions();
-
-  async function loadQuestions() {
+  // جلب أسئلة خارجية إن وجدت
+  async function initApp() {
     try {
-      const response = await fetch('questions.json');
-      allQuestions = await response.json();
-    } catch (e) {
-      alert('حدث خطأ في تحميل ملف الأسئلة questions.json');
-    }
+      const res = await fetch('questions.json');
+      if(res.ok) {
+        const data = await res.json();
+        if(data && data.length > 0) database = data;
+      }
+    } catch(e) {}
+  }
+  initApp();
+
+  function showScreen(screenId) {
+    document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+    document.getElementById(screenId).classList.remove('hidden');
   }
 
-  function selectChip(category, value, el) {
-    config[category] = value;
-    const parent = el.parentElement;
-    parent.querySelectorAll('.touch-chip').forEach(chip => chip.classList.remove('selected'));
+  function goToGrade() {
+    showScreen('screen-grade');
+  }
+
+  function goToSubject() {
+    showScreen('screen-subject');
+  }
+
+  function goToSemester(subject) {
+    currentSelection.subject = subject;
+    showScreen('screen-semester');
+  }
+
+  // حساب عدد أسئلة الوحدة تلقائياً بناءً على مجموع دروسها
+  function goToUnits(sem) {
+    currentSelection.semester = sem;
+    const unitsContainer = document.getElementById('units-container');
+    unitsContainer.innerHTML = '';
+
+    // تجميع الوحدات المتوفرة
+    let unitsMap = {};
+    database.forEach(q => {
+      if(!unitsMap[q.unit]) {
+        unitsMap[q.unit] = { name: q.unitName, count: 0 };
+      }
+      unitsMap[q.unit].count++;
+    });
+
+    Object.keys(unitsMap).forEach(uId => {
+      const u = unitsMap[uId];
+      const card = document.createElement('div');
+      card.className = 'select-card';
+      card.onclick = () => selectUnit(uId);
+      card.innerHTML = `
+        <div>
+          <div class="select-card-title">${u.name}</div>
+          <div class="select-card-sub">عدد الأسئلة الكلي بالوحدة: ${u.count} أسئلة</div>
+        </div>
+        <span>➔</span>
+      `;
+      unitsContainer.appendChild(card);
+    });
+
+    showScreen('screen-unit');
+  }
+
+  function selectUnit(unitId) {
+    currentSelection.unit = unitId;
+    const lessonsContainer = document.getElementById('lessons-container');
+    lessonsContainer.innerHTML = '';
+
+    // تجميع الدروس لهذه الوحدة
+    let lessonsMap = {};
+    database.filter(q => q.unit == unitId).forEach(q => {
+      if(!lessonsMap[q.lesson]) {
+        lessonsMap[q.lesson] = { name: q.lessonName, count: 0 };
+      }
+      lessonsMap[q.lesson].count++;
+    });
+
+    // خيار جميع الدروس بالوحدة
+    const allCard = document.createElement('div');
+    allCard.className = 'select-card selected';
+    allCard.onclick = (e) => highlightLesson('all', e.currentTarget);
+    allCard.innerHTML = `
+      <div>
+        <div class="select-card-title">جميع دروس الوحدة</div>
+        <div class="select-card-sub">عدد الأسئلة: ${database.filter(q => q.unit == unitId).length}</div>
+      </div>
+    `;
+    lessonsContainer.appendChild(allCard);
+
+    currentSelection.lesson = 'all';
+
+    Object.keys(lessonsMap).forEach(lId => {
+      const l = lessonsMap[lId];
+      const card = document.createElement('div');
+      card.className = 'select-card';
+      card.onclick = (e) => highlightLesson(lId, e.currentTarget);
+      card.innerHTML = `
+        <div>
+          <div class="select-card-title">الدرس ${lId}: ${l.name}</div>
+          <div class="select-card-sub">عدد الأسئلة: ${l.count}</div>
+        </div>
+      `;
+      lessonsContainer.appendChild(card);
+    });
+
+    showScreen('screen-lesson');
+  }
+
+  function highlightLesson(lId, element) {
+    currentSelection.lesson = lId;
+    document.querySelectorAll('#lessons-container .select-card').forEach(c => c.classList.remove('selected'));
+    element.classList.add('selected');
+  }
+
+  function setTimer(minutes, el) {
+    currentSelection.timerMinutes = minutes;
+    document.querySelectorAll('.timer-chip').forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
   }
 
-  function loadStats() {
-    document.getElementById('stat-exams').innerText = localStorage.getItem('stats_exams') || 0;
-    document.getElementById('stat-correct').innerText = localStorage.getItem('stats_correct') || 0;
-    document.getElementById('stat-incorrect').innerText = localStorage.getItem('stats_incorrect') || 0;
-  }
+  function startQuiz() {
+    let filtered = database.filter(q => q.unit == currentSelection.unit);
+    if(currentSelection.lesson !== 'all') {
+      filtered = filtered.filter(q => q.lesson == currentSelection.lesson);
+    }
 
-  function showStartScreen() {
-    document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
-    document.getElementById('start-screen').classList.remove('hidden');
-    loadStats();
-  }
-
-  function showHistoryScreen() {
-    document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
-    document.getElementById('history-screen').classList.remove('hidden');
-
-    const historyList = document.getElementById('history-list');
-    const historyData = JSON.parse(localStorage.getItem('exam_history') || '[]');
-
-    if (historyData.length === 0) {
-      historyList.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:20px;">لا يوجد امتحانات مسجلة حتى الآن.</p>';
+    if(filtered.length === 0) {
+      alert('لا توجد أسئلة مخصصة لهذا الخيار.');
       return;
     }
 
-    historyList.innerHTML = historyData.map((item, index) => `
-      <div class="history-item">
-        <div>
-          <strong style="display:block; font-size:15px; color:#1e293b;">${item.lessonName}</strong>
-          <span style="font-size:12px; color:#64748b;">${item.date} | جيل ${item.gen}</span>
-        </div>
-        <div style="font-weight:bold; font-size:16px; color: var(--primary);">
-          ${item.score} / ${item.total} (${item.percentage}%)
-        </div>
-      </div>
-    `).reverse().join('');
-  }
-
-  function clearHistory() {
-    if (confirm('هل أنت تأكد من مسح كافة سجلات الامتحانات؟')) {
-      localStorage.removeItem('exam_history');
-      localStorage.setItem('stats_exams', 0);
-      localStorage.setItem('stats_correct', 0);
-      localStorage.setItem('stats_incorrect', 0);
-      showHistoryScreen();
-      loadStats();
-    }
-  }
-
-  function prepareQuiz() {
-    if (allQuestions.length === 0) {
-      alert('جاري تحميل الأسئلة، يرجى الانتظار ثوانٍ.');
-      return;
-    }
-
-    let filteredList = allQuestions;
-    if (config.lesson !== 'all') {
-      filteredList = allQuestions.filter(q => q.lesson == config.lesson || !q.lesson);
-    }
-
-    if (filteredList.length === 0) {
-      alert('لا توجد أسئلة مخصصة لهذا الدرس حالياً.');
-      return;
-    }
-
-    selectedQuestions = [...filteredList];
-
-    const timerVal = parseInt(config.timer);
-    if (timerVal > 0) {
-      document.getElementById('hint-message').innerText = `تم تفعيل المؤقت بمقدار ${timerVal} دقيقة. العداد متاح في أعلى يسار الشاشة.`;
-      document.getElementById('hint-modal').classList.remove('hidden');
-    } else {
-      confirmStartQuiz();
-    }
-  }
-
-  function confirmStartQuiz() {
-    document.getElementById('hint-modal').classList.add('hidden');
-    document.getElementById('start-screen').classList.add('hidden');
-    document.getElementById('quiz-screen').classList.remove('hidden');
-
-    const timerVal = parseInt(config.timer);
-    if (timerVal > 0) {
-      startTimer(timerVal);
-    }
-
+    activeQuizQuestions = filtered;
     currentIndex = 0;
     userAnswers = [];
-    showQuestion();
+
+    showScreen('screen-quiz');
+
+    if(currentSelection.timerMinutes > 0) {
+      startTimer(currentSelection.timerMinutes);
+    } else {
+      document.getElementById('timer-badge').classList.add('hidden');
+    }
+
+    renderQuestion();
   }
 
   function startTimer(minutes) {
@@ -522,14 +651,14 @@
     document.getElementById('timer-badge').classList.remove('hidden');
     updateTimerDisplay();
 
+    if(timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
       timeRemaining--;
       updateTimerDisplay();
-
-      if (timeRemaining <= 0) {
+      if(timeRemaining <= 0) {
         clearInterval(timerInterval);
-        alert('انتهى الوقت المخصص للامتحان!');
-        showResults();
+        alert('انتهى وقت الامتحان!');
+        finishQuiz();
       }
     }, 1000);
   }
@@ -540,12 +669,12 @@
     document.getElementById('timer-display').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
 
-  function showQuestion() {
-    const q = selectedQuestions[currentIndex];
-    document.getElementById('question-count-text').innerText = `السؤال ${currentIndex + 1} من ${selectedQuestions.length}`;
+  function renderQuestion() {
+    const q = activeQuizQuestions[currentIndex];
+    document.getElementById('question-count-text').innerText = `السؤال ${currentIndex + 1} من ${activeQuizQuestions.length}`;
     document.getElementById('question-text').innerText = q.q;
 
-    const progressPct = ((currentIndex + 1) / selectedQuestions.length) * 100;
+    const progressPct = ((currentIndex + 1) / activeQuizQuestions.length) * 100;
     document.getElementById('progress-fill').style.width = `${progressPct}%`;
 
     const container = document.getElementById('options-container');
@@ -565,80 +694,103 @@
   function selectOption(idx) {
     userAnswers[currentIndex] = idx;
     const buttons = document.querySelectorAll('.option-btn');
-    buttons.forEach((btn, i) => {
-      btn.classList.toggle('selected', i === idx);
-    });
+    buttons.forEach((btn, i) => btn.classList.toggle('selected', i === idx));
     document.getElementById('next-btn').classList.remove('hidden');
   }
 
   function nextQuestion() {
-    if (userAnswers[currentIndex] === undefined) return;
-
+    if(userAnswers[currentIndex] === undefined) return;
     currentIndex++;
-    if (currentIndex < selectedQuestions.length) {
-      showQuestion();
+    if(currentIndex < activeQuizQuestions.length) {
+      renderQuestion();
     } else {
-      showResults();
+      finishQuiz();
     }
   }
 
-  function showResults() {
-    if (timerInterval) clearInterval(timerInterval);
+  function finishQuiz() {
+    if(timerInterval) clearInterval(timerInterval);
     document.getElementById('timer-badge').classList.add('hidden');
 
-    document.getElementById('quiz-screen').classList.add('hidden');
-    document.getElementById('result-screen').classList.remove('hidden');
+    showScreen('screen-results');
 
     let correctCount = 0;
-    const summaryContainer = document.getElementById('answers-summary');
-    summaryContainer.innerHTML = '';
+    const summary = document.getElementById('answers-summary');
+    summary.innerHTML = '';
 
-    selectedQuestions.forEach((q, index) => {
-      const userChoice = userAnswers[index];
-      const isCorrect = userChoice === q.correct;
-      if (isCorrect) correctCount++;
+    activeQuizQuestions.forEach((q, idx) => {
+      const uAns = userAnswers[idx];
+      const isCorrect = uAns === q.correct;
+      if(isCorrect) correctCount++;
 
       const card = document.createElement('div');
       card.className = `result-card ${isCorrect ? 'correct-box' : 'incorrect-box'}`;
-
       card.innerHTML = `
-        <strong>سؤال ${index + 1}: ${q.q}</strong><br>
-        <div style="margin-top: 6px;">إجابتك: ${q.options[userChoice] !== undefined ? q.options[userChoice] : 'لم يتم الإجابة'}</div>
+        <strong>سؤال ${idx + 1}: ${q.q}</strong><br>
+        <div style="margin-top:5px;">إجابتك: ${q.options[uAns] !== undefined ? q.options[uAns] : 'لم تجب'}</div>
         ${!isCorrect ? `<div>الإجابة الصحيحة: ${q.options[q.correct]}</div>` : ''}
-        ${q.explanation ? `<div class="explanation-box">التوضيح: ${q.explanation}</div>` : ''}
+        ${q.explanation ? `<div style="font-size:12px; opacity:0.85; margin-top:4px;">التوضيح: ${q.explanation}</div>` : ''}
       `;
-      summaryContainer.appendChild(card);
+      summary.appendChild(card);
     });
 
-    document.getElementById('score-display').innerText = `علامتك: ${correctCount} / ${selectedQuestions.length}`;
+    document.getElementById('score-display').innerText = `علامتك: ${correctCount} / ${activeQuizQuestions.length}`;
 
-    // حفظ وتحديث الإحصائيات وسجل الامتحانات
-    const incorrectCount = selectedQuestions.length - correctCount;
-    let exams = parseInt(localStorage.getItem('stats_exams') || 0) + 1;
-    let totalCorrect = parseInt(localStorage.getItem('stats_correct') || 0) + correctCount;
-    let totalIncorrect = parseInt(localStorage.getItem('stats_incorrect') || 0) + incorrectCount;
+    // حفظ وتحديث الإحصائيات بالسجل
+    saveStats(correctCount, activeQuizQuestions.length);
+  }
 
-    localStorage.setItem('stats_exams', exams);
-    localStorage.setItem('stats_correct', totalCorrect);
-    localStorage.setItem('stats_incorrect', totalIncorrect);
+  function saveStats(correct, total) {
+    let exams = parseInt(localStorage.getItem('st_exams') || 0) + 1;
+    let answered = parseInt(localStorage.getItem('st_answered') || 0) + total;
+    let correctSt = parseInt(localStorage.getItem('st_correct') || 0) + correct;
+    let incorrectSt = parseInt(localStorage.getItem('st_incorrect') || 0) + (total - correct);
 
-    // إضافة الامتحان لـ History
-    let history = JSON.parse(localStorage.getItem('exam_history') || '[]');
+    localStorage.setItem('st_exams', exams);
+    localStorage.setItem('st_answered', answered);
+    localStorage.setItem('st_correct', correctSt);
+    localStorage.setItem('st_incorrect', incorrectSt);
+
+    let history = JSON.parse(localStorage.getItem('st_history') || '[]');
     const now = new Date();
-    const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} - ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
-    
-    let lessonTitle = config.lesson === 'all' ? 'جميع الأسئلة' : `الدرس ${config.lesson}`;
-
     history.push({
-      date: dateStr,
-      lessonName: lessonTitle,
-      gen: config.gen,
-      score: correctCount,
-      total: selectedQuestions.length,
-      percentage: Math.round((correctCount / selectedQuestions.length) * 100)
+      date: `${now.getDate()}/${now.getMonth()+1} ${now.getHours()}:${now.getMinutes().toString().padStart(2,'0')}`,
+      title: `وحدة ${currentSelection.unit} (${currentSelection.lesson === 'all' ? 'جميع الدروس' : 'درس ' + currentSelection.lesson})`,
+      score: `${correct}/${total}`
     });
+    localStorage.setItem('st_history', JSON.stringify(history));
+  }
 
-    localStorage.setItem('exam_history', JSON.stringify(history));
+  function openStatsModal() {
+    document.getElementById('m-stat-exams').innerText = localStorage.getItem('st_exams') || 0;
+    document.getElementById('m-stat-answered').innerText = localStorage.getItem('st_answered') || 0;
+    document.getElementById('m-stat-correct').innerText = localStorage.getItem('st_correct') || 0;
+    document.getElementById('m-stat-incorrect').innerText = localStorage.getItem('st_incorrect') || 0;
+
+    const answered = parseInt(localStorage.getItem('st_answered') || 0);
+    const correct = parseInt(localStorage.getItem('st_correct') || 0);
+    const rate = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+    document.getElementById('m-stat-rate').innerText = `${rate}%`;
+
+    const hList = document.getElementById('modal-history-list');
+    const history = JSON.parse(localStorage.getItem('st_history') || '[]');
+
+    if(history.length === 0) {
+      hList.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:13px;">لا توجد امتحانات سابقة.</p>';
+    } else {
+      hList.innerHTML = history.map(item => `
+        <div style="display:flex; justify-content:space-between; background:#f1f5f9; padding:8px 12px; border-radius:8px; margin-bottom:6px; font-size:13px;">
+          <span>${item.title} <small style="color:#64748b;">(${item.date})</small></span>
+          <strong style="color:var(--primary);">${item.score}</strong>
+        </div>
+      `).reverse().join('');
+    }
+
+    document.getElementById('stats-modal').classList.remove('hidden');
+  }
+
+  function closeStatsModal() {
+    document.getElementById('stats-modal').classList.add('hidden');
   }
 </script>
 

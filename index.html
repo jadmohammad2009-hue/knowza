@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منصة التوجيهي - تاريخ الأردن</title>
+  <title>منصة التوجيهي الشاملة</title>
   <style>
     :root {
       --primary: #1e3a8a;
+      --primary-hover: #1d4ed8;
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --text: #0f172a;
@@ -30,14 +31,82 @@
 
     .container {
       width: 100%;
-      max-width: 700px;
+      max-width: 750px;
       background: var(--card-bg);
       padding: 24px;
       border-radius: 12px;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      position: relative;
     }
 
     .hidden { display: none !important; }
+
+    /* التايمر الثابت أعلى اليسار في زاوية الشاشة */
+    .timer-badge {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #ef4444;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      z-index: 9999;
+    }
+
+    /* شبكة خيارات شاشة الدخول */
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .control-group label {
+      display: block;
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #334155;
+    }
+
+    .select-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      font-size: 14px;
+      background-color: #fff;
+    }
+
+    /* لوحة الإحصائيات */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .stat-box {
+      background: #f1f5f9;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    .stat-number {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #64748b;
+    }
 
     .btn {
       background: var(--primary);
@@ -50,12 +119,11 @@
       width: 100%;
       margin-top: 10px;
       font-weight: bold;
+      transition: background 0.2s;
     }
 
-    .btn-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
+    .btn:hover {
+      background: var(--primary-hover);
     }
 
     .option-btn {
@@ -92,7 +160,7 @@
       transition: width 0.3s;
     }
 
-    /* كروت النتيجة النهائية - تصميم أحمر وأخضر كامل */
+    /* بطاقات النتائج (أخضر وأحمر كاملاً) */
     .result-card {
       padding: 16px;
       border-radius: 8px;
@@ -126,43 +194,145 @@
       border-top: 1px dashed rgba(0,0,0,0.15);
       padding-top: 6px;
     }
+
+    /* نافذة التنويه (Hint Popup) */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
   </style>
 </head>
 <body>
 
+<!-- شارة التايمر أعلى اليسار بالزاوية -->
+<div id="timer-badge" class="timer-badge hidden">الوقت: <span id="timer-display">00:00</span></div>
+
 <div class="container">
   
-  <!-- صفحة البداية واختيار عدد الأسئلة -->
+  <!-- شاشة الدخول الرئيسية -->
   <div id="start-screen">
-    <h2>اختبار تاريخ الأردن - الفصل الأول (العصور الحجرية)</h2>
-    <p>اختر عدد الأسئلة للبدء:</p>
-    <div class="btn-group">
-      <button class="btn" onclick="startQuiz(10)">اختبار سريع (10 أسئلة)</button>
-      <button class="btn" onclick="startQuiz('all')">امتحان كامل (110 سؤال)</button>
+    <h2 style="text-align: center; margin-bottom: 20px;">منصة الاختبارات الإلكترونية</h2>
+    
+    <!-- إحصائيات الطالب -->
+    <div class="stats-container">
+      <div class="stat-box">
+        <div id="stat-exams" class="stat-number">0</div>
+        <div class="stat-label">امتحانات مقدمة</div>
+      </div>
+      <div class="stat-box">
+        <div id="stat-correct" class="stat-number">0</div>
+        <div class="stat-label">إجابات صحيحة</div>
+      </div>
+      <div class="stat-box">
+        <div id="stat-incorrect" class="stat-number">0</div>
+        <div class="stat-label">إجابات خاطئة</div>
+      </div>
     </div>
+
+    <!-- قائمة الخيارات والدخول -->
+    <div class="filter-grid">
+      <div class="control-group">
+        <label>الجيل الدراسي:</label>
+        <select id="generation-select" class="select-input">
+          <option value="2007">جيل 2007</option>
+          <option value="2008">جيل 2008</option>
+          <option value="2009">جيل 2009</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>الصف:</label>
+        <select id="grade-select" class="select-input">
+          <option value="12">الثاني عشر (التوجيهي)</option>
+          <option value="11">الأول ثانوي</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>المادة:</label>
+        <select id="subject-select" class="select-input">
+          <option value="jordan-history">تاريخ الأردن</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>الوحدة / الدرس:</label>
+        <select id="lesson-select" class="select-input">
+          <option value="all">جميع الدروس والوحدات</option>
+          <option value="1">الدرس الأول: العصور الحجرية</option>
+          <option value="2">الدرس الثاني: التطور التاريخي</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>عدد الأسئلة:</label>
+        <select id="question-count-select" class="select-input">
+          <option value="10">اختبار سريع (10 أسئلة)</option>
+          <option value="30">اختبار متوسط (30 سؤال)</option>
+          <option value="all">كامل أسئلة الدرس (110 سؤال)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>مؤقت الوقت (التايمر):</label>
+        <select id="timer-select" class="select-input">
+          <option value="0">بدون تايمر</option>
+          <option value="15">15 دقيقة</option>
+          <option value="30">30 دقيقة</option>
+          <option value="45">45 دقيقة</option>
+          <option value="60">60 دقيقة</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn" onclick="prepareQuiz()">ابدأ الامتحان</button>
   </div>
 
-  <!-- صفحة تقديم الامتحان -->
+  <!-- شاشة تقديم الامتحان -->
   <div id="quiz-screen" class="hidden">
     <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
     <div style="display:flex; justify-content:space-between; margin-bottom: 15px;">
-      <span id="question-count">سؤال 1</span>
+      <span id="question-count-text" style="font-weight: bold;">سؤال 1</span>
     </div>
     <h3 id="question-text">نص السؤال...</h3>
     <div id="options-container"></div>
     <button id="next-btn" class="btn hidden" onclick="nextQuestion()">السؤال التالي</button>
   </div>
 
-  <!-- صفحة النتيجة النهائية -->
+  <!-- شاشة النتيجة -->
   <div id="result-screen" class="hidden">
     <h2>نتيجة الاختبار</h2>
     <div id="score-display" class="result-score">علامتك: 0 / 0</div>
     <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;">
-    <h3>مراجعة الإجابات:</h3>
+    <h3>مراجعة تفصيلية للإجابات:</h3>
     <div id="answers-summary"></div>
-    <button class="btn" onclick="location.reload()">إعادة الاختبار</button>
+    <button class="btn" onclick="location.reload()">العودة للرئيسية</button>
   </div>
 
+</div>
+
+<!-- نافذة تنويه التايمر (Hint Popup) -->
+<div id="hint-modal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h3>تنويه الامتحان</h3>
+    <p id="hint-message">تم تفعيل المؤقت لهذا الامتحان. سيبدأ العداد فور الضغط على ابدأ.</p>
+    <button class="btn" onclick="confirmStartQuiz()">تمام، ابدأ</button>
+  </div>
 </div>
 
 <script>
@@ -170,6 +340,10 @@
   let selectedQuestions = [];
   let currentIndex = 0;
   let userAnswers = [];
+  let timerInterval = null;
+  let timeRemaining = 0;
+
+  loadStats();
 
   async function loadQuestions() {
     try {
@@ -179,34 +353,92 @@
       alert('حدث خطأ في تحميل ملف الأسئلة questions.json');
     }
   }
-
   loadQuestions();
 
-  function startQuiz(countOption) {
+  function loadStats() {
+    document.getElementById('stat-exams').innerText = localStorage.getItem('stats_exams') || 0;
+    document.getElementById('stat-correct').innerText = localStorage.getItem('stats_correct') || 0;
+    document.getElementById('stat-incorrect').innerText = localStorage.getItem('stats_incorrect') || 0;
+  }
+
+  function prepareQuiz() {
     if (allQuestions.length === 0) {
-      alert('جاري تحميل الأسئلة، يرجى الانتظار ثوانٍ ثم المحاولة مجدداً.');
+      alert('جاري تحميل الأسئلة، يرجى الانتظار ثوانٍ.');
       return;
     }
 
-    if (countOption === 'all') {
-      selectedQuestions = [...allQuestions];
+    // تصفية الأسئلة حسب الدرس المختار
+    const lessonVal = document.getElementById('lesson-select').value;
+    let filteredList = allQuestions;
+
+    if (lessonVal !== 'all') {
+      filteredList = allQuestions.filter(q => q.lesson == lessonVal || !q.lesson);
+    }
+
+    if (filteredList.length === 0) {
+      alert('لا توجد أسئلة مخصصة لطلبك حالياً، سيتم عرض باقي الأسئلة.');
+      filteredList = allQuestions;
+    }
+
+    // تحديد عدد الأسئلة
+    const countVal = document.getElementById('question-count-select').value;
+    if (countVal === 'all') {
+      selectedQuestions = [...filteredList];
     } else {
-      // اختيار 10 أسئلة عشوائية
-      selectedQuestions = [...allQuestions].sort(() => 0.5 - Math.random()).slice(0, countOption);
+      selectedQuestions = [...filteredList].sort(() => 0.5 - Math.random()).slice(0, parseInt(countVal));
+    }
+
+    const timerVal = parseInt(document.getElementById('timer-select').value);
+    
+    if (timerVal > 0) {
+      document.getElementById('hint-message').innerText = `تم تفعيل التايمر بمقدار ${timerVal} دقيقة. العداد متاح بالزاوية العليا.`;
+      document.getElementById('hint-modal').classList.remove('hidden');
+    } else {
+      confirmStartQuiz();
+    }
+  }
+
+  function confirmStartQuiz() {
+    document.getElementById('hint-modal').classList.add('hidden');
+    document.getElementById('start-screen').classList.add('hidden');
+    document.getElementById('quiz-screen').classList.remove('hidden');
+
+    const timerVal = parseInt(document.getElementById('timer-select').value);
+    if (timerVal > 0) {
+      startTimer(timerVal);
     }
 
     currentIndex = 0;
     userAnswers = [];
-
-    document.getElementById('start-screen').classList.add('hidden');
-    document.getElementById('quiz-screen').classList.remove('hidden');
-
     showQuestion();
+  }
+
+  function startTimer(minutes) {
+    timeRemaining = minutes * 60;
+    document.getElementById('timer-badge').classList.remove('hidden');
+    updateTimerDisplay();
+
+    timerInterval = setInterval(() => {
+      timeRemaining--;
+      updateTimerDisplay();
+
+      if (timeRemaining <= 0) {
+        clearInterval(timerInterval);
+        alert('انتهى الوقت المخصص للامتحان!');
+        showResults();
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    const mins = Math.floor(timeRemaining / 60);
+    const secs = timeRemaining % 60;
+    document.getElementById('timer-display').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
 
   function showQuestion() {
     const q = selectedQuestions[currentIndex];
-    document.getElementById('question-count').innerText = `السؤال ${currentIndex + 1} من ${selectedQuestions.length}`;
+    document.getElementById('question-count-text').innerText = `السؤال ${currentIndex + 1} من ${selectedQuestions.length}`;
     document.getElementById('question-text').innerText = q.q;
 
     const progressPct = ((currentIndex + 1) / selectedQuestions.length) * 100;
@@ -247,6 +479,9 @@
   }
 
   function showResults() {
+    if (timerInterval) clearInterval(timerInterval);
+    document.getElementById('timer-badge').classList.add('hidden');
+
     document.getElementById('quiz-screen').classList.add('hidden');
     document.getElementById('result-screen').classList.remove('hidden');
 
@@ -260,7 +495,6 @@
       if (isCorrect) correctCount++;
 
       const card = document.createElement('div');
-      // تحويل البوكس كاملاً إلى أخضر إذا صح، أو أحمر إذا خطأ
       card.className = `result-card ${isCorrect ? 'correct-box' : 'incorrect-box'}`;
 
       card.innerHTML = `
@@ -272,8 +506,17 @@
       summaryContainer.appendChild(card);
     });
 
-    // عرض النتيجة بدون إيموجيات وبصيغة: علامتك: X / Y
     document.getElementById('score-display').innerText = `علامتك: ${correctCount} / ${selectedQuestions.length}`;
+
+    // حفظ وتحديث الإحصائيات
+    const incorrectCount = selectedQuestions.length - correctCount;
+    let exams = parseInt(localStorage.getItem('stats_exams') || 0) + 1;
+    let totalCorrect = parseInt(localStorage.getItem('stats_correct') || 0) + correctCount;
+    let totalIncorrect = parseInt(localStorage.getItem('stats_incorrect') || 0) + incorrectCount;
+
+    localStorage.setItem('stats_exams', exams);
+    localStorage.setItem('stats_correct', totalCorrect);
+    localStorage.setItem('stats_incorrect', totalIncorrect);
   }
 </script>
 

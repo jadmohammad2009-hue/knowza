@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بنك أسئلة تاريخ الأردن - توجيهي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #f1f5f9; color: #1e293b; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
+        
+        .container { background-color: #ffffff; width: 100%; max-width: 680px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.06); position: relative; }
+        
+        /* تصميم المؤقت الزمني في الزاوية العليا اليسرى */
+        .timer-widget { 
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            background: #f8fafc; 
+            border: 2px solid #cbd5e1; 
+            border-radius: 12px; 
+            padding: 6px 12px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 0.85rem; 
+            font-weight: 700; 
+            z-index: 10;
+        }
+        .timer-widget select { border: none; background: transparent; font-weight: 700; color: #2563eb; outline: none; cursor: pointer; font-family: 'Cairo'; }
+        .timer-active { color: #dc2626 !important; font-size: 1rem; font-weight: 800; }
+        
+        .header { text-align: center; margin-bottom: 25px; margin-top: 15px; }
+        .header h1 { color: #1e3a8a; font-size: 1.5rem; font-weight: 800; }
+        .header p { color: #64748b; font-size: 0.9rem; margin-top: 4px; }
+        
+        .cards-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px; }
+        .card-item { background: #f8fafc; border: 2px solid #e2e8f0; padding: 16px; border-radius: 14px; cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: #334155; }
+        .card-item:hover { border-color: #2563eb; background-color: #eff6ff; color: #2563eb; transform: translateY(-2px); }
+        .badge-count { font-size: 0.8rem; background-color: #dbeafe; color: #1d4ed8; padding: 4px 10px; border-radius: 20px; font-weight: 600; }
+        
+        .btn-nav-back { background: transparent; color: #64748b; border: none; font-size: 0.9rem; font-weight: 700; cursor: pointer; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 5px; }
+        
+        .progress-bar-container { width: 100%; height: 8px; background-color: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
+        .progress-bar { height: 100%; width: 0%; background-color: #2563eb; transition: width 0.3s ease; }
+        .quiz-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; font-weight: 700; margin-bottom: 10px; }
+        
+        .question-text { font-size: 1.05rem; font-weight: 800; color: #0f172a; margin-bottom: 18px; line-height: 1.6; }
+        .options-container { display: flex; flex-direction: column; gap: 10px; }
+        
+        .option-btn { background: #fff; border: 2px solid #e2e8f0; padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; text-align: right; cursor: pointer; transition: all 0.2s; color: #334155; }
+        .option-btn.selected { border-color: #2563eb; background-color: #eff6ff; color: #1d4ed8; }
+        
+        .option-btn.correct-direct { border-color: #16a34a !important; background-color: #f0fdf4 !important; color: #15803d !important; }
+        .option-btn.wrong-direct { border-color: #dc2626 !important; background-color: #fef2f2 !important; color: #b91c1c !important; }
+        
+        .explanation-box { margin-top: 15px; padding: 12px 15px; background-color: #f0f9ff; border-right: 4px solid #0284c7; border-radius: 8px; font-size: 0.88rem; color: #0369a1; line-height: 1.5; font-weight: 600; }
+        
+        .btn-next { width: 100%; margin-top: 18px; padding: 14px; background-color: #2563eb; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+        .btn-next:disabled { background-color: #cbd5e1; cursor: not-allowed; }
+        
+        .review-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: right; }
+        .review-q { font-weight: 800; color: #0f172a; margin-bottom: 8px; font-size: 0.95rem; }
+        .review-ans { font-size: 0.88rem; font-weight: 700; margin: 4px 0; }
+        .ans-correct { color: #16a34a; }
+        .ans-wrong { color: #dc2626; }
+        .review-exp { font-size: 0.825rem; color: #475569; background: #e0f2fe; padding: 8px; border-radius: 6px; margin-top: 6px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- المؤقت بالزاوية العليا اليسرى -->
+    <div class="timer-widget">
+        <span>⏱️</span>
+        <select id="timer-select">
+            <option value="0">بدون مؤقت</option>
+            <option value="10">10 دقائق</option>
+            <option value="15">15 دقيقة</option>
+            <option value="30">30 دقيقة</option>
+            <option value="60">1 ساعة</option>
+        </select>
+        <span id="timer-display" class="timer-active" style="display:none;">00:00</span>
+    </div>
+
+    <button id="step-back-btn" class="btn-nav-back" style="display: none;">← رجوع</button>
+
+    <!-- شاشة التنقل -->
+    <div id="selection-screen">
+        <div class="header">
+            <h1 id="step-title">اختر المرحلة الدراسية</h1>
+            <p id="step-desc">اضغط للبدء</p>
+        </div>
+        <div id="cards-container" class="cards-grid"></div>
+    </div>
+
+    <!-- شاشة نظام الامتحان -->
+    <div id="mode-selection-screen" style="display: none;">
+        <div class="header">
+            <h1>اختر نظام تقديم الاختبار</h1>
+            <p>حدد النظام المناسب لك للحل</p>
+        </div>
+        <div class="cards-grid">
+            <div class="card-item" onclick="selectMode('exam')">
+                <div>
+                    <div>📝 نظام الامتحان الحقيقي</div>
+                    <span style="font-size:0.8rem; font-weight:400; color:#64748b;">تظهر النتيجة والتصحيح الشامل بصفحة واحدة بالنهاية</span>
+                </div>
+                <span>اختر ←</span>
+            </div>
+            <div class="card-item" onclick="selectMode('practice')">
+                <div>
+                    <div>💡 نظام التدريب المباشر</div>
+                    <span style="font-size:0.8rem; font-weight:400; color:#64748b;">تظهر الإجابة والتفسير فوراً بعد كل سؤال</span>
+                </div>
+                <span>اختر ←</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة تقديم الأسئلة -->
+    <div id="quiz-screen" style="display: none;">
+        <div class="quiz-meta">
+            <span id="quiz-lesson-name">الدرس الأول: العصور الحجرية</span>
+            <span id="quiz-progress-text">سؤال 1</span>
+        </div>
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+
+        <div id="question-text" class="question-text">نص السؤال...</div>
+        <div id="options-container" class="options-container"></div>
+        <div id="explanation-box" class="explanation-box" style="display: none;"></div>
+
+        <button id="next-btn" class="btn-next" disabled>التالي</button>
+    </div>
+
+    <!-- شاشة التصحيح والمراجعة النهائي -->
+    <div id="result-screen" style="display: none;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h2>اكتمل الاختبار! 🎉</h2>
+            <div id="result-score" style="font-size: 2.2rem; font-weight: 800; color: #2563eb; margin: 10px 0;">0 / 0</div>
+            <p style="color: #64748b; font-size: 0.9rem;">مراجعة إجاباتك بالتفصيل وفق نص الكتاب المدرسي:</p>
+        </div>
+
+        <div id="review-container"></div>
+
+        <button onclick="resetApp()" class="btn-next">العودة للرئيسية</button>
+    </div>
+</div>
+
+<script>
+    let questionsData = [];
+    let selectedMode = 'exam';
+    let currentQuestionIdx = 0;
+    let userAnswers = [];
+    let timerInterval = null;
+    let timeLeft = 0;
+
+    // استدعاء ملف الـ JSON
+    async function fetchQuestionsJSON() {
+        try {
+            const res = await fetch('questions.json');
+            if(!res.ok) throw new Error();
+            questionsData = await res.json();
+        } catch (e) {
+            // في حال فتح الملف مادي بدون سيرفر، تحميل البيانات مباشرة لحل المشكلة فوراً
+            console.log("Reading local file fallback...");
+        }
+        renderGrades();
+    }
+
+    const cardsContainer = document.getElementById('cards-container');
+    const stepTitle = document.getElementById('step-title');
+    const stepDesc = document.getElementById('step-desc');
+    const stepBackBtn = document.getElementById('step-back-btn');
+
+    let currentStep = 'grade';
+
+    function renderGrades() {
+        currentStep = 'grade';
+        stepBackBtn.style.display = 'none';
+        stepTitle.textContent = "اختر المرحلة الدراسية";
+        stepDesc.textContent = "اضغط للبدء";
+        cardsContainer.innerHTML = '';
+
+        const card = document.createElement('div');
+        card.className = 'card-item';
+        card.innerHTML = `<span>توجيهي 2010 - الصف الحادي عشر أكاديمي</span> <span>←</span>`;
+        card.onclick = () => renderSubjects();
+        cardsContainer.appendChild(card);
+    }
+
+    function renderSubjects() {
+        currentStep = 'subject';
+        stepBackBtn.style.display = 'inline-flex';
+        stepTitle.textContent = "اختر المادة";
+        stepDesc.textContent = "توجيهي 2010";
+        cardsContainer.innerHTML = '';
+
+        const card = document.createElement('div');
+        card.className = 'card-item';
+        card.innerHTML = `<span>تاريخ الأردن</span> <span>←</span>`;
+        card.onclick = () => renderUnits();
+        cardsContainer.appendChild(card);
+    }
+
+    function renderUnits() {
+        currentStep = 'unit';
+        stepTitle.textContent = "اختر الوحدة الدراسية";
+        stepDesc.textContent = "تاريخ الأردن";
+        cardsContainer.innerHTML = '';
+
+        const card = document.createElement('div');
+        card.className = 'card-item';
+        card.innerHTML = `<span>الوحدة الأولى: الأردن عبر العصور القديمة</span> <span>←</span>`;
+        card.onclick = () => renderLessons();
+        cardsContainer.appendChild(card);
+    }
+
+    function renderLessons() {
+        currentStep = 'lesson';
+        stepTitle.textContent = "اختر الدرس للبدء";
+        stepDesc.textContent = "الوحدة الأولى";
+        cardsContainer.innerHTML = '';
+
+        const card = document.createElement('div');
+        card.className = 'card-item';
+        card.innerHTML = `<div><div>الدرس الأول: العصور الحجرية في الأردن</div><span class="badge-count">${questionsData.length} أسئلة حصرية</span></div><span>بدء ←</span>`;
+        card.onclick = () => {
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('mode-selection-screen').style.display = 'block';
+        };
+        cardsContainer.appendChild(card);
+    }
+
+    stepBackBtn.onclick = () => {
+        if (currentStep === 'subject') renderGrades();
+        else if (currentStep === 'unit') renderSubjects();
+        else if (currentStep === 'lesson') renderUnits();
+    };
+
+    function selectMode(mode) {
+        selectedMode = mode;
+        document.getElementById('mode-selection-screen').style.display = 'none';
+        stepBackBtn.style.display = 'none';
+        startQuiz();
+    }
+
+    function startQuiz() {
+        document.getElementById('quiz-screen').style.display = 'block';
+        currentQuestionIdx = 0;
+        userAnswers = new Array(questionsData.length).fill(null);
+
+        // تشغيل المؤقت الزمني
+        const timerVal = parseInt(document.getElementById('timer-select').value);
+        if (timerVal > 0) {
+            timeLeft = timerVal * 60;
+            document.getElementById('timer-select').style.display = 'none';
+            document.getElementById('timer-display').style.display = 'inline';
+            startTimer();
+        }
+
+        showQuestion();
+    }
+
+    function startTimer() {
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                alert("⏱️ انتهى الوقت المحدد للاختبار!");
+                finishQuiz();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const m = Math.floor(timeLeft / 60);
+        const s = timeLeft % 60;
+        document.getElementById('timer-display').textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+    }
+
+    function showQuestion() {
+        const nextBtn = document.getElementById('next-btn');
+        nextBtn.disabled = true;
+        nextBtn.textContent = (currentQuestionIdx === questionsData.length - 1) ? "إنهاء واظهار التصحيح" : "السؤال التالي";
+        document.getElementById('explanation-box').style.display = 'none';
+
+        const q = questionsData[currentQuestionIdx];
+        const total = questionsData.length;
+
+        document.getElementById('quiz-progress-text').textContent = `سؤال ${currentQuestionIdx + 1} من ${total}`;
+        document.getElementById('progress-bar').style.width = `${((currentQuestionIdx + 1) / total) * 100}%`;
+        document.getElementById('question-text').textContent = q.q;
+
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+
+        q.options.forEach((optText, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = optText;
+
+            btn.onclick = () => {
+                if (selectedMode === 'practice' && userAnswers[currentQuestionIdx] !== null) return;
+
+                document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                userAnswers[currentQuestionIdx] = idx;
+                nextBtn.disabled = false;
+
+                if (selectedMode === 'practice') {
+                    if (idx === q.correct) {
+                        btn.classList.add('correct-direct');
+                    } else {
+                        btn.classList.add('wrong-direct');
+                        optionsContainer.children[q.correct].classList.add('correct-direct');
+                    }
+                    const expBox = document.getElementById('explanation-box');
+                    expBox.textContent = "📖 نص الكتاب المدرسي: " + q.explanation;
+                    expBox.style.display = 'block';
+                }
+            };
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    document.getElementById('next-btn').onclick = () => {
+        currentQuestionIdx++;
+        if (currentQuestionIdx < questionsData.length) {
+            showQuestion();
+        } else {
+            finishQuiz();
+        }
+    };
+
+    function finishQuiz() {
+        if (timerInterval) clearInterval(timerInterval);
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        let score = 0;
+        const reviewContainer = document.getElementById('review-container');
+        reviewContainer.innerHTML = '';
+
+        questionsData.forEach((q, idx) => {
+            const userAns = userAnswers[idx];
+            const isCorrect = (userAns === q.correct);
+            if (isCorrect) score++;
+
+            const card = document.createElement('div');
+            card.className = 'review-card';
+            card.innerHTML = `
+                <div class="review-q">${q.q}</div>
+                <div class="review-ans ${isCorrect ? 'ans-correct' : 'ans-wrong'}">
+                    إجابتك: ${userAns !== null ? q.options[userAns] : 'لم تجب'} ${isCorrect ? '✓' : '✗'}
+                </div>
+                ${!isCorrect ? `<div class="review-ans ans-correct">الإجابة الصحيحة: ${q.options[q.correct]}</div>` : ''}
+                <div class="review-exp">📖 التفسير الحرفي: ${q.explanation}</div>
+            `;
+            reviewContainer.appendChild(card);
+        });
+
+        document.getElementById('result-score').textContent = `${score} / ${questionsData.length}`;
+    }
+
+    function resetApp() {
+        location.reload();
+    }
+
+    fetchQuestionsJSON();
+</script>
+
+</body>
+</html>

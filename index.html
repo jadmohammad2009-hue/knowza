@@ -46,7 +46,6 @@
 
     .hidden { display: none !important; }
 
-    /* أنيميشن ناعم للظهور */
     .fade-in {
       animation: fadeIn 0.35s ease-in-out forwards;
     }
@@ -55,7 +54,7 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* 1. دائرة الإحصائيات في أعلى يمين المتصفح */
+    /* زر الإحصائيات بالزاوية العليا اليمين */
     .stats-circle-btn {
       position: absolute;
       top: 18px;
@@ -77,9 +76,9 @@
     }
     .stats-circle-btn:active { transform: scale(0.92); }
 
-    /* الزر الزجاجي المتدرج من اليمين لليسار */
+    /* المستطيل الزجاجي الملتف متدرج من اليمين لليسار */
     .glass-btn {
-      background: linear-gradient(to left, rgba(30, 58, 138, 0.9), rgba(59, 130, 246, 0.7));
+      background: linear-gradient(to left, rgba(30, 58, 138, 0.95), rgba(59, 130, 246, 0.75));
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.3);
@@ -96,7 +95,6 @@
     }
     .glass-btn:active { transform: scale(0.97); }
 
-    /* أزرار اختيار العناصر */
     .select-card {
       background: #f8fafc;
       border: 2px solid #e2e8f0;
@@ -122,17 +120,10 @@
       cursor: not-allowed;
       background: #f1f5f9;
     }
-    .select-card-title {
-      font-weight: bold;
-      font-size: 16px;
-    }
-    .select-card-sub {
-      font-size: 12px;
-      color: #64748b;
-      margin-top: 4px;
-    }
+    .select-card-title { font-weight: bold; font-size: 16px; }
+    .select-card-sub { font-size: 13px; color: #64748b; margin-top: 4px; }
 
-    /* التايمر خيارات قبل الامتحان */
+    /* قسم اختيار التايمر */
     .timer-section {
       background: #fff7ed;
       border: 2px solid #fed7aa;
@@ -165,7 +156,6 @@
       border-color: var(--accent);
     }
 
-    /* أزرار عامة وزر الرجوع */
     .btn {
       background: var(--primary);
       color: white;
@@ -187,7 +177,6 @@
       margin-top: 10px;
     }
 
-    /* التايمر أثناء تقديم الامتحان */
     .timer-badge {
       position: fixed;
       top: 15px;
@@ -202,7 +191,6 @@
       z-index: 99;
     }
 
-    /* شاشات الإجابات والنتائج */
     .option-btn {
       background: #f1f5f9;
       color: var(--text);
@@ -251,7 +239,6 @@
       color: var(--danger-text);
     }
 
-    /* نافذة Modal الإحصائيات */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -290,10 +277,7 @@
 </head>
 <body>
 
-<!-- 1. زر دائرة الإحصائيات ثابت في الزاوية العليا اليمين -->
 <div class="stats-circle-btn" onclick="openStatsModal()" title="الإحصائيات والسجل">📊</div>
-
-<!-- شارة التايمر في الزاوية العليا اليسرى أثناء حل الامتحان -->
 <div id="timer-badge" class="timer-badge hidden">الوقت: <span id="timer-display">00:00</span></div>
 
 <div class="container">
@@ -307,14 +291,10 @@
         <br><strong style="color: var(--accent); font-size: 13px;">(هذه مجرد نسخة تجريبية للموقع)</strong>
       </p>
     </div>
-
-    <!-- مستطيل زجاجي متدرج من اليمين لليسار -->
-    <div class="glass-btn" onclick="goToGrade()">
-      قسم الامتحانات
-    </div>
+    <div class="glass-btn" onclick="goToGrade()">قسم الامتحانات</div>
   </div>
 
-  <!-- الخطوة 1: اختيار الصف -->
+  <!-- 1. اختيار الصف -->
   <div id="screen-grade" class="hidden fade-in">
     <h3>اختر الصف الدراسي:</h3>
     <div class="select-card selected" onclick="goToSubject()">
@@ -327,7 +307,7 @@
     <button class="btn btn-back" onclick="showScreen('screen-welcome')">رجوع</button>
   </div>
 
-  <!-- الخطوة 2: قائمة المواد -->
+  <!-- 2. اختيار المادة -->
   <div id="screen-subject" class="hidden fade-in">
     <h3>اختر المادة:</h3>
     <div class="select-card selected" onclick="goToSemester('jordan-history')">
@@ -337,32 +317,13 @@
       </div>
       <span>➔</span>
     </div>
-
-    <div class="select-card disabled">
-      <div>
-        <div class="select-card-title">اللغة العربية</div>
-        <div class="select-card-sub">قريباً</div>
-      </div>
-    </div>
-
-    <div class="select-card disabled">
-      <div>
-        <div class="select-card-title">الرياضيات</div>
-        <div class="select-card-sub">قريباً</div>
-      </div>
-    </div>
-
-    <div class="select-card disabled">
-      <div>
-        <div class="select-card-title">التربية الإسلامية</div>
-        <div class="select-card-sub">قريباً</div>
-      </div>
-    </div>
-
+    <div class="select-card disabled"><div><div class="select-card-title">اللغة العربية</div><div class="select-card-sub">قريباً</div></div></div>
+    <div class="select-card disabled"><div><div class="select-card-title">الرياضيات</div><div class="select-card-sub">قريباً</div></div></div>
+    <div class="select-card disabled"><div><div class="select-card-title">التربية الإسلامية</div><div class="select-card-sub">قريباً</div></div></div>
     <button class="btn btn-back" onclick="showScreen('screen-grade')">رجوع</button>
   </div>
 
-  <!-- الخطوة 3: اختيار الفصل -->
+  <!-- 3. اختيار الفصل -->
   <div id="screen-semester" class="hidden fade-in">
     <h3>اختر الفصل الدراسي:</h3>
     <div class="select-card selected" onclick="goToUnits(1)">
@@ -372,31 +333,22 @@
       </div>
       <span>➔</span>
     </div>
-
-    <div class="select-card disabled">
-      <div>
-        <div class="select-card-title">الفصل الثاني</div>
-        <div class="select-card-sub">قريباً</div>
-      </div>
-    </div>
-
+    <div class="select-card disabled"><div><div class="select-card-title">الفصل الثاني</div><div class="select-card-sub">قريباً</div></div></div>
     <button class="btn btn-back" onclick="showScreen('screen-subject')">رجوع</button>
   </div>
 
-  <!-- الخطوة 4: اختيار الوحدة -->
+  <!-- 4. اختيار الوحدة -->
   <div id="screen-unit" class="hidden fade-in">
     <h3>اختر الوحدة الدراسية:</h3>
     <div id="units-container"></div>
     <button class="btn btn-back" onclick="showScreen('screen-semester')">رجوع</button>
   </div>
 
-  <!-- الخطوة 5: اختيار الدرس والتايمر (قبل الامتحان) -->
+  <!-- 5. اختيار الدرس والتايمر -->
   <div id="screen-lesson" class="hidden fade-in">
     <h3>اختر الدرس وبداية الامتحان:</h3>
-    
     <div id="lessons-container"></div>
 
-    <!-- قسم التايمر قبل بداية الامتحان -->
     <div class="timer-section">
       <div style="font-weight: bold; font-size: 14px; color: #9a3412;">⏱️ هل تريد تفعيل المؤقت (التايمر)؟</div>
       <div class="timer-grid">
@@ -413,7 +365,7 @@
     <button class="btn btn-back" onclick="showScreen('screen-unit')">رجوع</button>
   </div>
 
-  <!-- شاشة تقديم الامتحان -->
+  <!-- شاشة الامتحان -->
   <div id="screen-quiz" class="hidden fade-in">
     <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
     <div style="display:flex; justify-content:space-between; margin-bottom: 15px;">
@@ -424,7 +376,7 @@
     <button id="next-btn" class="btn hidden" onclick="nextQuestion()">السؤال التالي</button>
   </div>
 
-  <!-- شاشة النتيجة النهائي -->
+  <!-- شاشة النتيجة -->
   <div id="screen-results" class="hidden fade-in">
     <h2>نتيجة الاختبار</h2>
     <div id="score-display" style="font-size: 26px; font-weight: bold; text-align: center; margin: 15px 0;">علامتك: 0 / 0</div>
@@ -436,7 +388,7 @@
 
 </div>
 
-<!-- نافذة Modal الإحصائيات التفاعلية -->
+<!-- نافذة الإحصائيات -->
 <div id="stats-modal" class="modal-overlay hidden fade-in">
   <div class="modal-content">
     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:10px;">
@@ -445,22 +397,10 @@
     </div>
 
     <div class="stats-grid">
-      <div class="stat-card">
-        <div id="m-stat-exams" class="stat-val">0</div>
-        <div class="stat-lbl">عدد الامتحانات</div>
-      </div>
-      <div class="stat-card">
-        <div id="m-stat-answered" class="stat-val">0</div>
-        <div class="stat-lbl">الأسئلة المجاب عليها</div>
-      </div>
-      <div class="stat-card">
-        <div id="m-stat-correct" class="stat-val" style="color:#22c55e;">0</div>
-        <div class="stat-lbl">الإجابات الصحيحة</div>
-      </div>
-      <div class="stat-card">
-        <div id="m-stat-incorrect" class="stat-val" style="color:#ef4444;">0</div>
-        <div class="stat-lbl">الإجابات الخاطئة</div>
-      </div>
+      <div class="stat-card"><div id="m-stat-exams" class="stat-val">0</div><div class="stat-lbl">عدد الامتحانات</div></div>
+      <div class="stat-card"><div id="m-stat-answered" class="stat-val">0</div><div class="stat-lbl">الأسئلة المجاب عليها</div></div>
+      <div class="stat-card"><div id="m-stat-correct" class="stat-val" style="color:#22c55e;">0</div><div class="stat-lbl">الإجابات الصحيحة</div></div>
+      <div class="stat-card"><div id="m-stat-incorrect" class="stat-val" style="color:#ef4444;">0</div><div class="stat-lbl">الإجابات الخاطئة</div></div>
     </div>
 
     <div style="text-align:center; background:#f0f7ff; padding:12px; border-radius:10px; margin-bottom:15px;">
@@ -476,14 +416,7 @@
 </div>
 
 <script>
-  // هيكل الأسئلة المدمج افتراضياً مع إمكانية التحميل الخارجي
-  let database = [
-    { id: 1, unit: 1, unitName: "الوحدة الأولى: تاريخ الأردن وحضارته", lesson: 1, lessonName: "العصور الحجرية", q: "أولى العصور البشرية التي استقر فيها الإنسان في الأردن هي العصر الحجري القديم.", options: ["صح", "خطأ"], correct: 0, explanation: "استقر الإنسان في الأردن منذ العصر الحجري القديم." },
-    { id: 2, unit: 1, unitName: "الوحدة الأولى: تاريخ الأردن وحضارته", lesson: 1, lessonName: "العصور الحجرية", q: "من أبرز المواقع التابعة للعصر الحجري الحديث في الأردن موقع:", options: ["عين غزال", "البتراء", "أم قيس", "جرش"], correct: 0, explanation: "موقع عين غزال من أشهر القرى الزراعية بالعصر الحجري الحديث." },
-    { id: 3, unit: 1, unitName: "الوحدة الأولى: تاريخ الأردن وحضارته", lesson: 2, lessonName: "التطور التاريخي", q: "نشأت المملكة الأدمية في جنوب الأردن.", options: ["صح", "خطأ"], correct: 0, explanation: "تمركز الأدوميون في جنوب الأردن وكانت عاصمتهم بصيرا." },
-    { id: 4, unit: 2, unitName: "الوحدة الثانية: الأردن في العصر الحديث", lesson: 1, lessonName: "تأسيس الإمارة", q: "تأسست إمارة شرق الأردن عام 1921م.", options: ["صح", "خطأ"], correct: 0, explanation: "وصل الأمير عبد الله الأول إلى معان عام 1920 وأسس الإمارة 1921." },
-    { id: 5, unit: 3, unitName: "الوحدة الثالثة: النهضة الوطنية", lesson: 1, lessonName: "المؤسسات الدستورية", q: "صدر أول دستور للمملكة في عام:", options: ["1928م", "1947م", "1952م", "1974م"], correct: 2, explanation: "دستور 1952 في عهد الملك طلال هو الدستور المعتمد حالياً مع تعديلاته." }
-  ];
+  let database = [];
 
   let currentSelection = {
     grade: '2010',
@@ -500,52 +433,53 @@
   let timerInterval = null;
   let timeRemaining = 0;
 
-  // جلب أسئلة خارجية إن وجدت
-  async function initApp() {
+  // تحميل أسئلة JSON من الملف الخارجي مباشرة
+  async function loadDatabase() {
     try {
       const res = await fetch('questions.json');
-      if(res.ok) {
-        const data = await res.json();
-        if(data && data.length > 0) database = data;
+      if (res.ok) {
+        database = await res.json();
       }
-    } catch(e) {}
+    } catch(e) {
+      console.warn("تعذر تحميل ملف questions.json تلقائياً. تأكد من رفعهما بنسخ السيرفر المحلي.");
+    }
   }
-  initApp();
+  loadDatabase();
 
   function showScreen(screenId) {
     document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
     document.getElementById(screenId).classList.remove('hidden');
   }
 
-  function goToGrade() {
-    showScreen('screen-grade');
-  }
-
-  function goToSubject() {
-    showScreen('screen-subject');
-  }
-
+  function goToGrade() { showScreen('screen-grade'); }
+  function goToSubject() { showScreen('screen-subject'); }
   function goToSemester(subject) {
     currentSelection.subject = subject;
     showScreen('screen-semester');
   }
 
-  // حساب عدد أسئلة الوحدة تلقائياً بناءً على مجموع دروسها
+  // عرض الوحدات وقراءة أسمائها وعدد أسئلتها ديناميكياً
   function goToUnits(sem) {
     currentSelection.semester = sem;
     const unitsContainer = document.getElementById('units-container');
     unitsContainer.innerHTML = '';
 
-    // تجميع الوحدات المتوفرة
+    const semQuestions = database.filter(q => q.semester == sem);
     let unitsMap = {};
-    database.forEach(q => {
+
+    semQuestions.forEach(q => {
       if(!unitsMap[q.unit]) {
         unitsMap[q.unit] = { name: q.unitName, count: 0 };
       }
       unitsMap[q.unit].count++;
     });
 
-    Object.keys(unitsMap).forEach(uId => {
+    const unitKeys = Object.keys(unitsMap);
+    if(unitKeys.length === 0) {
+      unitsContainer.innerHTML = '<p style="text-align:center; color:#94a3b8;">جاري تحميل الأسئلة أو لا تتوفر وحدات لهذه المادة...</p>';
+    }
+
+    unitKeys.forEach(uId => {
       const u = unitsMap[uId];
       const card = document.createElement('div');
       card.className = 'select-card';
@@ -563,28 +497,30 @@
     showScreen('screen-unit');
   }
 
+  // قراءة الدروس التابعة للوحدة المحددة وإظهار الأسماء المعتمدة
   function selectUnit(unitId) {
     currentSelection.unit = unitId;
     const lessonsContainer = document.getElementById('lessons-container');
     lessonsContainer.innerHTML = '';
 
-    // تجميع الدروس لهذه الوحدة
+    const unitQuestions = database.filter(q => q.semester == currentSelection.semester && q.unit == unitId);
+
     let lessonsMap = {};
-    database.filter(q => q.unit == unitId).forEach(q => {
+    unitQuestions.forEach(q => {
       if(!lessonsMap[q.lesson]) {
         lessonsMap[q.lesson] = { name: q.lessonName, count: 0 };
       }
       lessonsMap[q.lesson].count++;
     });
 
-    // خيار جميع الدروس بالوحدة
+    // كرت اختيار كل دروس الوحدة
     const allCard = document.createElement('div');
     allCard.className = 'select-card selected';
     allCard.onclick = (e) => highlightLesson('all', e.currentTarget);
     allCard.innerHTML = `
       <div>
         <div class="select-card-title">جميع دروس الوحدة</div>
-        <div class="select-card-sub">عدد الأسئلة: ${database.filter(q => q.unit == unitId).length}</div>
+        <div class="select-card-sub">عدد الأسئلة: ${unitQuestions.length}</div>
       </div>
     `;
     lessonsContainer.appendChild(allCard);
@@ -621,7 +557,7 @@
   }
 
   function startQuiz() {
-    let filtered = database.filter(q => q.unit == currentSelection.unit);
+    let filtered = database.filter(q => q.semester == currentSelection.semester && q.unit == currentSelection.unit);
     if(currentSelection.lesson !== 'all') {
       filtered = filtered.filter(q => q.lesson == currentSelection.lesson);
     }
@@ -735,8 +671,6 @@
     });
 
     document.getElementById('score-display').innerText = `علامتك: ${correctCount} / ${activeQuizQuestions.length}`;
-
-    // حفظ وتحديث الإحصائيات بالسجل
     saveStats(correctCount, activeQuizQuestions.length);
   }
 
